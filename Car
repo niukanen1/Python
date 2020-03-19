@@ -8,7 +8,7 @@ WHITE = (255, 255, 255)
 
 sc = pygame.display.set_mode(SCREEN)
 sc.fill(WHITE)
-car_surf_main = pygame.image.load('png/car.png').convert_alpha()
+car_surf_main = pygame.image.load('Python/car.png').convert_alpha()
 car_surf = car_surf_main
 car_rect = car_surf_main.get_rect(center=(300, 200))
 sc.blit(car_surf_main, car_rect)
