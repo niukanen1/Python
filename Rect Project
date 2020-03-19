@@ -1,0 +1,41 @@
+import pygame as p
+
+p.init()
+w = 500
+h = 300
+sc = p.display.set_mode((w,h))
+FPS = 60
+Black = (0,0,0)
+White = (255, 255,255 )
+color = (255, 0, 0)
+clock = p.time.Clock()
+p.mouse.set_visible(False)
+font = p.font.Font(None, 50)
+place = (0,0)
+text = font.render('HI', 1, Black)
+surf1 = p.Surface((10,10))
+
+surf2 = p.Surface((50,50))
+rect2 = p.Rect(50,50, 50,50)
+
+
+while 1:
+    sc.fill(White)
+    rect1 = p.Rect(p.mouse.get_pos()[0], p.mouse.get_pos()[1], 10, 10)
+    surf1.fill(color)
+    sc.blit(surf1, (p.mouse.get_pos()[0], p.mouse.get_pos()[1]))
+    sc.blit(surf2, (50, 50))
+    for i in p.event.get():
+        if i.type == p.QUIT:
+            p.quit()
+            exit()
+
+
+    if rect2.contains(rect1):
+        sc.blit(text, place)
+
+
+
+    p.display.update()
+    clock.tick(FPS)
+
