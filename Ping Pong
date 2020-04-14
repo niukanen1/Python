@@ -1,0 +1,137 @@
+import pygame
+from pygame.locals import *
+
+pygame.init()
+W = 600
+H = 400
+sc = pygame.display.set_mode((W, H))
+Black = (0, 0, 0)
+White = (255, 255, 255)
+Gray = (170, 170, 170)
+Red = (255, 0, 0)
+clock = pygame.time.Clock()
+FPS = 30
+motion1 = 'stop'
+motion2 = 'stop'
+Half_screen1 = pygame.Surface((W // 2, (H - 50)))
+Half_screen1.fill(White)
+Half_screen2 = pygame.Surface((W // 2, (H - 50)))
+Half_screen2.fill(Gray)
+speed_of_plat = 5
+
+
+
+
+class platform1(pygame.sprite.Sprite):
+    def __init__(self):
+        pygame.sprite.Sprite.__init__(self)
+        self.image = pygame.Surface((2, 60))
+        self.image.fill(Red)
+        self.rect = self.image.get_rect()
+        self.rect.center = (20, H // 2)
+
+    def move(self):
+        if motion1 == 'up' and self.rect.y > 50:
+            self.rect.y -= speed_of_plat
+        if motion1 == 'down' and self.rect.y < H - 60:
+            self.rect.y += speed_of_plat
+
+
+class platform2(pygame.sprite.Sprite):
+    def __init__(self):
+        pygame.sprite.Sprite.__init__(self)
+        self.image = pygame.Surface((2, 60))
+        self.image.fill(Red)
+        self.rect = self.image.get_rect()
+        self.rect.center = (W - 20, H // 2)
+
+    def move(self):
+        if motion2 == 'up' and self.rect.y > 50:
+            self.rect.y -= speed_of_plat
+        elif motion2 == 'down' and self.rect.y < H - 60:
+            self.rect.y += speed_of_plat
+
+
+class Ball(pygame.sprite.Sprite):
+    def __init__(self):
+        pygame.sprite.Sprite.__init__(self)
+        self.image = pygame.Surface((20, 20))
+        self.image.fill(Black)
+        self.rect = self.image.get_rect()
+        self.rect.center = (W // 2, (H // 2) + 60)
+        self.speed_of_bally = 5
+        self.speed_of_ballx = 5
+        self.score_1 = 0
+        self.score_2 = 0
+    def move(self):
+        self.rect.y += self.speed_of_bally
+        self.rect.x -= self.speed_of_ballx
+        if self.rect.x >= W - 20:
+            self.rect.x, self.rect.y = W // 2, H // 2 + 60
+            plat2.rect.center = (W - 20, H // 2)
+            plat1.rect.center = (20, H // 2)
+            self.score_1 += 1
+            pygame.time.wait(1000)
+        elif self.rect.x <= 0:
+            self.rect.x, self.rect.y = W // 2, H // 2 + 60
+            plat2.rect.center = (W - 20, H // 2)
+            plat1.rect.center = (20, H // 2)
+            self.score_2 += 1
+            pygame.time.wait(1000)
+        elif self.rect.y >= H - 20 or self.rect.y <= 50:
+            self.speed_of_bally *= -1
+
+
+b = pygame.sprite.Group()
+p1 = pygame.sprite.Group()
+p2 = pygame.sprite.Group()
+plat1 = platform1()
+plat2 = platform2()
+ball = Ball()
+p1.add(plat1)
+p2.add(plat2)
+b.add(ball)
+
+f = pygame.font.SysFont('arial', 36)
+go = True
+while go:
+    touch = False
+    keys = pygame.key.get_pressed()
+    plat2.move()
+    plat1.move()
+    ball.move()
+    text = f.render('{0} : {1}'.format(ball.score_1, ball.score_2), 1, White)
+    for i in pygame.event.get():
+        if i.type == QUIT:
+            quit()
+            exit()
+
+    if pygame.sprite.spritecollideany(ball, p1) and ball.rect.x >= 20:
+        ball.speed_of_ballx *= -1
+
+    elif pygame.sprite.spritecollideany(ball, p2) and ball.rect.x <= W - 40:
+        ball.speed_of_ballx *= -1
+
+    if keys[K_UP]:
+        motion2 = 'up'
+    elif keys[K_DOWN]:
+        motion2 = 'down'
+    else:
+        motion2 = 'stop'
+    if keys[K_w]:
+        motion1 = 'up'
+    elif keys[K_s]:
+        motion1 = 'down'
+    else:
+        motion1 = 'stop'
+
+    p1.update()
+    sc.fill(Black)
+    sc.blit(Half_screen1, (0, 50))
+    sc.blit(Half_screen2, (W // 2, 50))
+    sc.blit(text, (250, 0))
+    p1.draw(sc)
+    p2.draw(sc)
+    b.draw(sc)
+    pygame.display.update()
+    clock.tick(FPS)
